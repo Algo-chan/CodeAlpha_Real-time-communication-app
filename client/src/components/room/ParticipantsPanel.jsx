@@ -7,8 +7,6 @@ import {
   Crown,
   UserX,
   VolumeX,
-  Lock,
-  Unlock,
 } from 'lucide-react'
 import { Button, Avatar, Toggle, useToast } from '../ui'
 import { useRoomStore } from '../../store/room.store'
@@ -38,10 +36,10 @@ export function ParticipantsPanel({ socket }) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full select-none">
       {/* Host Controls Banner (if self is host) */}
       {isCurrentUserHost && (
-        <div className="p-4 border-b border-separator/30 bg-accent-muted/20">
+        <div className="p-3.5 border-b border-separator/30 bg-accent-muted/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Crown className="w-4 h-4 text-amber-500" />
@@ -57,9 +55,9 @@ export function ParticipantsPanel({ socket }) {
       )}
 
       {/* Participants List */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
         {/* Self entry */}
-        <div className="glass-panel p-3 rounded-xl border border-separator/30 flex items-center justify-between">
+        <div className="p-3 rounded-2xl bg-surface-elevated border border-separator/30 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3">
             <Avatar name={self?.displayName || 'You'} size="md" />
             <div>
@@ -74,7 +72,7 @@ export function ParticipantsPanel({ socket }) {
                 )}
               </div>
               <p className="text-caption-1 text-label-secondary">
-                {self?.isGuest ? 'Guest' : 'Authenticated User'}
+                {self?.isGuest ? 'Guest Participant' : 'Host / Member'}
               </p>
             </div>
           </div>
@@ -97,14 +95,14 @@ export function ParticipantsPanel({ socket }) {
         {peerList.map((peer) => (
           <div
             key={peer.socketId}
-            className="glass-panel p-3 rounded-xl border border-separator/30 flex items-center justify-between group"
+            className="p-3 rounded-2xl bg-surface-elevated border border-separator/30 flex items-center justify-between group shadow-xs"
           >
             <div className="flex items-center gap-3">
-              <Avatar name={peer.displayName} size="md" />
+              <Avatar name={peer.displayName || 'Participant'} size="md" />
               <div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-subheadline font-semibold text-label">
-                    {peer.displayName}
+                    {peer.displayName || 'Participant'}
                   </span>
                   {peer.isHost && (
                     <span title="Meeting Host">
@@ -132,15 +130,16 @@ export function ParticipantsPanel({ socket }) {
                 )}
               </div>
 
-              {/* Host actions on remote peer */}
-              {isCurrentUserHost && !peer.isHost && (
-                <div className="flex items-center gap-1">
+              {/* Host Quick Actions */}
+              {isCurrentUserHost && (
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     variant="ghost"
                     size="icon-sm"
                     onClick={() => handleMutePeer(peer.socketId, peer.displayName)}
-                    title={`Mute ${peer.displayName}`}
-                    className="text-label-tertiary hover:text-system-destructive"
+                    aria-label={`Mute ${peer.displayName}`}
+                    title="Mute participant"
+                    className="text-label-secondary hover:text-system-warning"
                   >
                     <VolumeX className="w-4 h-4" />
                   </Button>
@@ -148,8 +147,9 @@ export function ParticipantsPanel({ socket }) {
                     variant="ghost"
                     size="icon-sm"
                     onClick={() => handleRemovePeer(peer.socketId, peer.displayName)}
-                    title={`Remove ${peer.displayName}`}
-                    className="text-label-tertiary hover:text-system-destructive"
+                    aria-label={`Remove ${peer.displayName}`}
+                    title="Remove from room"
+                    className="text-label-secondary hover:text-system-destructive"
                   >
                     <UserX className="w-4 h-4" />
                   </Button>

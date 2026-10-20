@@ -39,35 +39,35 @@ export function Modal({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          {/* Frosted Backdrop */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto select-none">
+          {/* Frosted Dimming Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-md"
+            className="fixed inset-0 bg-black/45 backdrop-blur-md"
           />
 
-          {/* Modal Container */}
+          {/* Modal Container (Apple Dense Liquid Glass Sheet) */}
           <motion.div
             ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? 'modal-title' : undefined}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-            className={`relative w-full ${maxWidth} glass-panel rounded-card bg-surface/90 shadow-floating dark:shadow-floating-dark border border-separator/50 overflow-hidden z-10 flex flex-col`}
+            exit={{ opacity: 0, scale: 0.95, y: 12 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            className={`relative w-full ${maxWidth} liquid-glass-dense rounded-card shadow-2xl border border-white/20 dark:border-white/10 overflow-hidden z-10 flex flex-col`}
           >
             {/* Header */}
             {(title || showCloseButton) && (
               <div className="flex items-start justify-between p-6 pb-4 border-b border-separator/30">
                 <div>
                   {title && (
-                    <h2 id="modal-title" className="text-title-2 text-label">
+                    <h2 id="modal-title" className="text-title-2 text-label font-bold" style={{ letterSpacing: '-0.018em' }}>
                       {title}
                     </h2>
                   )}
@@ -98,7 +98,7 @@ export function Modal({
 
             {/* Footer */}
             {footer && (
-              <div className="p-4 px-6 border-t border-separator/30 bg-surface-elevated/40 flex items-center justify-end gap-3">
+              <div className="p-6 pt-4 border-t border-separator/30 bg-surface/30 flex items-center justify-end gap-3">
                 {footer}
               </div>
             )}

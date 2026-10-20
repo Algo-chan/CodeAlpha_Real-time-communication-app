@@ -21,15 +21,15 @@ export function SidePanel({ socket, roomId }) {
   return (
     <AnimatePresence>
       <motion.aside
-        aria-label="Room details and chat sidebar"
+        aria-label="Room details, chat, and files drawer"
         initial={{ x: '100%', opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: '100%', opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 32 }}
-        className="w-full sm:w-96 h-full glass-panel bg-surface/95 border-l border-separator/40 shadow-floating flex flex-col z-30 shrink-0"
+        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+        className="w-full sm:w-96 h-full liquid-glass-dense border-l border-separator/40 shadow-2xl flex flex-col z-30 shrink-0 select-none"
       >
         {/* Header with Segmented Tabs & Close button */}
-        <div className="p-3 border-b border-separator/30 flex items-center justify-between gap-2">
+        <div className="p-3.5 border-b border-separator/30 flex items-center justify-between gap-2.5">
           <SegmentedControl
             options={tabs}
             value={activeSideTab}
@@ -42,14 +42,14 @@ export function SidePanel({ socket, roomId }) {
             variant="ghost"
             size="icon-sm"
             onClick={() => setActiveSideTab(null)}
-            aria-label="Close panel"
+            aria-label="Close sidebar panel"
             className="text-label-secondary hover:text-label shrink-0"
           >
             <X className="w-4 h-4" />
           </Button>
         </div>
 
-        {/* Tab Content */}
+        {/* Tab Content Container */}
         <div className="flex-1 overflow-hidden">
           {activeSideTab === 'chat' && <ChatPanel socket={socket} />}
           {activeSideTab === 'files' && <FilesPanel roomId={roomId} />}

@@ -23,7 +23,7 @@ export function Skeleton({
 
 export function SkeletonCard() {
   return (
-    <div className="glass-panel p-6 rounded-card flex flex-col gap-4 border border-separator/30">
+    <div className="apple-card p-6 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Skeleton className="h-6 w-32 rounded-pill" />
         <Skeleton className="h-8 w-8 rounded-full" />

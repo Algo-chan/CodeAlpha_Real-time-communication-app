@@ -79,26 +79,26 @@ export function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-4 relative overflow-hidden select-none">
       {/* Background Ambience */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 blur-[100px] pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[540px] h-[540px] bg-accent/10 blur-[110px] pointer-events-none rounded-full" />
 
       {/* Brand Header */}
       <Link to="/" className="mb-8 flex items-center gap-2.5 group">
-        <div className="w-10 h-10 rounded-2xl bg-accent flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+        <div className="w-10 h-10 rounded-2xl bg-accent flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-200">
           <Video className="w-5 h-5" />
         </div>
-        <span className="text-large-title font-bold tracking-tight text-label">
+        <span className="text-large-title font-bold text-label" style={{ letterSpacing: '-0.022em' }}>
           Collab<span className="text-accent">Room</span>
         </span>
       </Link>
 
-      {/* Auth Card */}
+      {/* Auth Card (Apple Sheet / Dense Glass Floating Layer) */}
       <motion.div
-        initial={{ opacity: 0, y: 15, scale: 0.98 }}
+        initial={{ opacity: 0, y: 16, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-        className="w-full max-w-md glass-panel bg-surface/90 rounded-card p-6 sm:p-8 shadow-floating border border-separator/40 relative z-10"
+        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+        className="w-full max-w-md liquid-glass-dense rounded-card p-6 sm:p-8 shadow-2xl relative z-10"
       >
         <div className="flex justify-center mb-6">
           <SegmentedControl
@@ -115,12 +115,12 @@ export function Auth() {
         </div>
 
         <div className="text-center mb-6">
-          <h2 className="text-title-2 font-bold text-label">
+          <h2 className="text-title-2 font-bold text-label" style={{ letterSpacing: '-0.018em' }}>
             {mode === 'signup' ? 'Start collaborating' : 'Welcome back'}
           </h2>
           <p className="text-footnote text-label-secondary mt-1">
             {mode === 'signup'
-              ? 'Join millions holding secure real-time conferences.'
+              ? 'Create a free account to host and manage meetings.'
               : 'Sign in to access your recent rooms and scheduled calls.'}
           </p>
         </div>
@@ -171,23 +171,25 @@ export function Auth() {
 
           <Button
             type="submit"
-            variant="primary"
             size="lg"
-            isLoading={isLoading}
+            variant="primary"
             rightIcon={ArrowRight}
-            className="w-full mt-2"
+            disabled={isLoading}
+            className="mt-2 w-full shadow-lg shadow-accent/25"
           >
-            {mode === 'signup' ? 'Create Account' : 'Sign In'}
+            {isLoading
+              ? 'Please wait...'
+              : mode === 'signup'
+              ? 'Create Account'
+              : 'Sign In'}
           </Button>
         </form>
 
-        <div className="mt-6 text-center">
-          <Link
-            to="/"
-            className="text-footnote text-label-secondary hover:text-label transition-colors"
-          >
-            &larr; Back to Home
-          </Link>
+        <div className="mt-6 pt-4 border-t border-separator/30 text-center text-caption-1 text-label-secondary">
+          <span>By signing in, you agree to our </span>
+          <span className="text-label hover:underline cursor-pointer">Terms</span>
+          <span> and </span>
+          <span className="text-label hover:underline cursor-pointer">Privacy Policy</span>.
         </div>
       </motion.div>
     </div>

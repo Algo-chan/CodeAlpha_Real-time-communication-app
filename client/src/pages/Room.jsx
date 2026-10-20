@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { io } from 'socket.io-client'
-import { Copy, Shield, ShieldAlert, Sparkles, Check } from 'lucide-react'
+import { Copy, ShieldAlert, Check, MonitorUp, StopCircle } from 'lucide-react'
 import { VideoGrid } from '../components/room/VideoGrid'
 import { ControlBar } from '../components/room/ControlBar'
 import { SidePanel } from '../components/room/SidePanel'
@@ -10,7 +10,7 @@ import { useRoomStore } from '../store/room.store'
 import { useMediaStore } from '../store/media.store'
 import { useWebRTC } from '../hooks/useWebRTC'
 import { useScreenShare } from '../hooks/useScreenShare'
-import { useToast } from '../components/ui'
+import { useToast, Button } from '../components/ui'
 
 export function Room() {
   const { id: shortId } = useParams()
@@ -31,6 +31,7 @@ export function Room() {
     setTypingUser,
     addFile,
     isWhiteboardOpen,
+    isSharingScreen,
     resetRoom,
     room,
     self,
@@ -45,12 +46,10 @@ export function Room() {
 
   // Retrieve joinToken and participant data passed from PreJoin
   const joinToken = location.state?.joinToken
-  const initialParticipant = location.state?.participant
 
   // Connect Socket.io client
   useEffect(() => {
     if (!joinToken) {
-      // Missing auth or token — redirect back to pre-join lobby
       navigate(`/join/${shortId}`, { replace: true })
       return
     }
@@ -178,32 +177,46 @@ export function Room() {
 
   return (
     <div className="relative w-screen h-screen bg-black overflow-hidden flex flex-col select-none">
-      {/* Top Header Overlay Bar */}
+      {/* Top Header Overlay Bar (Floating Clear Liquid Glass over Video) */}
       <header className="absolute top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-2 pointer-events-auto">
-          <div className="glass-toolbar rounded-pill px-3.5 py-1.5 flex items-center gap-2 text-white shadow-md">
+        <div className="flex items-center gap-2.5 pointer-events-auto">
+          <div className="liquid-glass-clear rounded-pill px-3.5 py-1.5 flex items-center gap-2.5 text-white shadow-xl">
             <span className="w-2 h-2 rounded-full bg-system-success animate-pulse" />
             <span className="text-subheadline font-semibold truncate max-w-[200px]">
               {room?.name || 'Meeting'}
             </span>
-            <span className="text-separator/60">|</span>
+            <span className="text-white/30">|</span>
             <button
               onClick={copyRoomCode}
-              className="text-caption-1 font-mono text-white/80 hover:text-white flex items-center gap-1 transition-colors"
+              className="text-caption-1 font-mono text-white/80 hover:text-white flex items-center gap-1.5 transition-colors"
               title="Copy room link"
             >
               <span>{shortId}</span>
-              {isCopied ? <Check className="w-3 h-3 text-system-success" /> : <Copy className="w-3 h-3" />}
+              {isCopied ? <Check className="w-3.5 h-3.5 text-system-success" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
           </div>
 
           {room?.isLocked && (
-            <div className="glass-toolbar rounded-pill px-2.5 py-1 text-caption-1 text-amber-400 font-medium flex items-center gap-1">
+            <div className="liquid-glass-clear rounded-pill px-3 py-1.5 text-caption-1 text-amber-400 font-medium flex items-center gap-1.5 shadow-xl">
               <ShieldAlert className="w-3.5 h-3.5" />
-              <span>Locked</span>
+              <span>Room Locked</span>
             </div>
           )}
         </div>
+
+        {/* Screen Sharing Active Banner */}
+        {isSharingScreen && (
+          <div className="pointer-events-auto liquid-glass-dense px-3.5 py-1.5 rounded-pill flex items-center gap-2.5 shadow-xl border border-system-success/30">
+            <span className="w-2 h-2 rounded-full bg-system-success animate-ping" />
+            <span className="text-caption-1 font-medium text-label">You are sharing your screen</span>
+            <button
+              onClick={stopScreenShare}
+              className="px-2.5 py-0.5 rounded-pill bg-system-destructive text-white text-[11px] font-semibold hover:opacity-90 transition-opacity"
+            >
+              Stop
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Main Workspace Area */}

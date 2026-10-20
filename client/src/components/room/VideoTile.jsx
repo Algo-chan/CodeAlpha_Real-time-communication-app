@@ -67,10 +67,10 @@ export function VideoTile({
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative w-full h-full rounded-tile bg-neutral-900 overflow-hidden select-none border transition-all duration-200 flex items-center justify-center ${
+      className={`relative w-full h-full rounded-[24px] bg-[#121214] overflow-hidden select-none border transition-all duration-300 flex items-center justify-center shadow-lg ${
         isActiveSpeaker
-          ? 'border-accent ring-2 ring-accent/40 shadow-lg'
-          : 'border-separator/20'
+          ? 'border-accent shadow-[0_0_0_2px_var(--color-accent),0_8px_32px_-4px_rgba(0,113,227,0.4)]'
+          : 'border-white/[0.08]'
       } ${className}`}
     >
       {/* Live Video Element */}
@@ -79,7 +79,7 @@ export function VideoTile({
           ref={videoRef}
           autoPlay
           playsInline
-          muted={isSelf} // always mute self to prevent feedback echo
+          muted={isSelf} // always mute self locally
           className={`w-full h-full object-cover ${
             isSelf && !isSharingScreen ? '-scale-x-100' : ''
           }`}
@@ -91,16 +91,16 @@ export function VideoTile({
             size="2xl"
             className="shadow-md"
           />
-          <p className="mt-3 text-subheadline text-white/70 font-medium">
+          <p className="mt-3 text-subheadline text-white/80 font-medium">
             {participant?.displayName || 'User'}
           </p>
         </div>
       )}
 
-      {/* Screen Sharing Badge Overlay */}
+      {/* Screen Sharing Presentation Badge */}
       {isSharingScreen && (
-        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-pill bg-accent/90 backdrop-blur-md text-white text-caption-1 font-semibold flex items-center gap-1.5 shadow-sm z-20">
-          <Tv2 className="w-3.5 h-3.5" />
+        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-pill liquid-glass-dense text-white text-caption-1 font-semibold flex items-center gap-1.5 shadow-sm z-20">
+          <Tv2 className="w-3.5 h-3.5 text-accent" />
           <span>Screen Presentation</span>
         </div>
       )}
@@ -152,9 +152,9 @@ export function VideoTile({
         </button>
       </div>
 
-      {/* Bottom Info Bar */}
+      {/* Bottom Info Bar: Clear Liquid Glass floating over video stream */}
       <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-10">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-pill bg-black/55 backdrop-blur-md text-white text-caption-1 font-medium max-w-[80%] truncate">
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-pill liquid-glass-clear text-white text-caption-1 font-medium max-w-[80%] truncate">
           {participant?.isHost && (
             <span title="Meeting Host">
               <Shield className="w-3 h-3 text-accent" />

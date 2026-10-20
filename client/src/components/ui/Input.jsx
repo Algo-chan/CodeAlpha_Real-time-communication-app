@@ -24,17 +24,17 @@ export const Input = React.forwardRef(({
   return (
     <div className={`relative flex flex-col gap-1 w-full ${className}`}>
       <div
-        className={`relative flex items-center w-full rounded-input border transition-all duration-200 bg-surface-elevated/70 ${
+        className={`relative flex items-center w-full rounded-[14px] border transition-all duration-200 bg-surface-elevated/80 shadow-xs ${
           error
             ? 'border-system-destructive focus-within:ring-2 focus-within:ring-system-destructive/30'
             : isFocused
-            ? 'border-accent ring-2 ring-accent/20 bg-surface'
-            : 'border-separator/40 hover:border-separator'
+            ? 'border-accent ring-2 ring-accent/25 bg-surface'
+            : 'border-separator/50 hover:border-separator'
         }`}
       >
         {LeftIcon && (
           <div className="pl-3.5 text-label-tertiary">
-            <LeftIcon className="w-5 h-5" />
+            <LeftIcon className="w-4 h-4" />
           </div>
         )}
 
@@ -50,7 +50,7 @@ export const Input = React.forwardRef(({
             onBlur={() => setIsFocused(false)}
             placeholder={isFocused ? placeholder : ' '}
             required={required}
-            className={`w-full bg-transparent px-3.5 pt-5 pb-2 text-body text-label placeholder:text-label-tertiary focus:outline-none ${
+            className={`w-full bg-transparent px-3.5 pt-5 pb-2 text-subheadline text-label placeholder:text-label-tertiary focus:outline-none ${
               LeftIcon ? 'pl-2' : ''
             }`}
             {...props}
@@ -80,7 +80,7 @@ export const Input = React.forwardRef(({
 
         {RightIcon && (
           <div className="pr-3.5 text-label-tertiary">
-            <RightIcon className="w-5 h-5" />
+            <RightIcon className="w-4 h-4" />
           </div>
         )}
       </div>
@@ -97,5 +97,3 @@ export const Input = React.forwardRef(({
     </div>
   )
 })
-
-Input.displayName = 'Input'

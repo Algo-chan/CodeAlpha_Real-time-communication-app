@@ -51,7 +51,7 @@ export function ControlBar({
     setIsVisible(true)
     if (hideTimerRef.current) clearTimeout(hideTimerRef.current)
     hideTimerRef.current = setTimeout(() => {
-      // Don't hide if side tab is open or leave modal is open
+      // Don't hide if leave modal is open
       if (!isLeaveModalOpen) {
         setIsVisible(false)
       }
@@ -123,23 +123,24 @@ export function ControlBar({
         {isVisible && (
           <motion.nav
             aria-label="Meeting Controls"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 28 }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40"
           >
-            <div className="glass-toolbar rounded-pill p-2 sm:p-2.5 flex items-center gap-1.5 sm:gap-2 shadow-floating">
-              {/* Mic Toggle */}
-              <Tooltip content={isAudioEnabled ? 'Mute (M)' : 'Unmute (M)'}>
+            {/* Apple Floating Island Capsule */}
+            <div className="liquid-glass-dense rounded-full p-2 sm:p-2.5 flex items-center gap-1.5 sm:gap-2 shadow-floating">
+              {/* Mic Toggle with Voice Indicator */}
+              <Tooltip content={isAudioEnabled ? 'Mute Mic (M)' : 'Unmute Mic (M)'}>
                 <Button
                   variant={isAudioEnabled ? 'secondary' : 'destructive'}
                   size="icon"
                   onClick={toggleAudio}
                   aria-label={isAudioEnabled ? 'Mute microphone' : 'Unmute microphone'}
-                  className="rounded-full"
+                  className="rounded-full shadow-sm"
                 >
-                  {isAudioEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+                  {isAudioEnabled ? <Mic className="w-4.5 h-4.5" /> : <MicOff className="w-4.5 h-4.5" />}
                 </Button>
               </Tooltip>
 
@@ -150,13 +151,13 @@ export function ControlBar({
                   size="icon"
                   onClick={toggleVideo}
                   aria-label={isVideoEnabled ? 'Stop video camera' : 'Start video camera'}
-                  className="rounded-full"
+                  className="rounded-full shadow-sm"
                 >
-                  {isVideoEnabled ? <VideoIcon className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+                  {isVideoEnabled ? <VideoIcon className="w-4.5 h-4.5" /> : <VideoOff className="w-4.5 h-4.5" />}
                 </Button>
               </Tooltip>
 
-              <div className="h-6 w-px bg-separator/40 mx-0.5" />
+              <div className="h-5 w-px bg-separator/50 mx-0.5" />
 
               {/* Screen Share */}
               <Tooltip content={isSharingScreen ? 'Stop Sharing (S)' : 'Share Screen (S)'}>
@@ -167,7 +168,7 @@ export function ControlBar({
                   aria-label="Share screen"
                   className="rounded-full"
                 >
-                  <MonitorUp className="w-5 h-5" />
+                  <MonitorUp className="w-4.5 h-4.5" />
                 </Button>
               </Tooltip>
 
@@ -180,11 +181,11 @@ export function ControlBar({
                   aria-label="Whiteboard canvas"
                   className="rounded-full"
                 >
-                  <Palette className="w-5 h-5" />
+                  <Palette className="w-4.5 h-4.5" />
                 </Button>
               </Tooltip>
 
-              <div className="h-6 w-px bg-separator/40 mx-0.5" />
+              <div className="h-5 w-px bg-separator/50 mx-0.5" />
 
               {/* Chat with Unread Badge */}
               <Tooltip content="Chat (C)">
@@ -196,10 +197,10 @@ export function ControlBar({
                     aria-label="Toggle chat"
                     className="rounded-full"
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <MessageSquare className="w-4.5 h-4.5" />
                   </Button>
                   {unreadMessagesCount > 0 && activeSideTab !== 'chat' && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-accent text-white text-caption-1 font-bold flex items-center justify-center shadow-sm">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-accent text-white text-[10px] font-bold flex items-center justify-center shadow-md animate-pulse">
                       {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
                     </span>
                   )}
@@ -215,7 +216,7 @@ export function ControlBar({
                   aria-label="Shared files"
                   className="rounded-full"
                 >
-                  <FolderOpen className="w-5 h-5" />
+                  <FolderOpen className="w-4.5 h-4.5" />
                 </Button>
               </Tooltip>
 
@@ -228,7 +229,7 @@ export function ControlBar({
                   aria-label="Participants list"
                   className="rounded-full"
                 >
-                  <Users className="w-5 h-5" />
+                  <Users className="w-4.5 h-4.5" />
                 </Button>
               </Tooltip>
 
@@ -239,13 +240,13 @@ export function ControlBar({
                   size="icon"
                   onClick={handleToggleHand}
                   aria-label="Raise hand"
-                  className={`rounded-full ${isHandRaised ? 'bg-amber-500 hover:bg-amber-600' : ''}`}
+                  className={`rounded-full ${isHandRaised ? 'bg-amber-500 hover:bg-amber-600 shadow-md' : ''}`}
                 >
-                  <Hand className="w-5 h-5" />
+                  <Hand className="w-4.5 h-4.5" />
                 </Button>
               </Tooltip>
 
-              <div className="h-6 w-px bg-separator/40 mx-0.5" />
+              <div className="h-5 w-px bg-separator/50 mx-0.5" />
 
               {/* Leave Call Button */}
               <Button
@@ -253,9 +254,9 @@ export function ControlBar({
                 size="md"
                 leftIcon={PhoneOff}
                 onClick={() => setIsLeaveModalOpen(true)}
-                className="rounded-pill px-4 shadow-sm"
+                className="rounded-pill px-4"
               >
-                Leave
+                End
               </Button>
             </div>
           </motion.nav>
@@ -266,8 +267,8 @@ export function ControlBar({
       <Modal
         isOpen={isLeaveModalOpen}
         onClose={() => setIsLeaveModalOpen(false)}
-        title="Leave Meeting?"
-        description="Are you sure you want to exit this conference call?"
+        title="Leave Conference?"
+        description="Are you sure you want to exit the current meeting session?"
         footer={
           <>
             <Button variant="ghost" onClick={() => setIsLeaveModalOpen(false)}>

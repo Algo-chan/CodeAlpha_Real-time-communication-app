@@ -9,7 +9,6 @@ import {
   Music,
   Archive,
   Loader2,
-  X,
   Lock,
 } from 'lucide-react'
 import { Button, useToast } from '../ui'
@@ -22,7 +21,6 @@ export function FilesPanel({ roomId }) {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [cancelSource, setCancelSource] = useState(null)
 
   const { files, setFiles, addFile } = useRoomStore()
 
@@ -82,7 +80,7 @@ export function FilesPanel({ roomId }) {
       })
 
       addFile(data.file)
-      toast.success(`${file.name} uploaded & encrypted`)
+      toast.success(`${file.name} encrypted & uploaded`)
     } catch (err) {
       toast.error(err.response?.data?.error || 'File upload failed')
     } finally {
@@ -93,10 +91,7 @@ export function FilesPanel({ roomId }) {
 
   const handleDownloadFile = async (fileId, fileName) => {
     try {
-      // 1. Get signed, time-limited download URL
       const { data } = await api.get(`/files/sign/${fileId}`)
-
-      // 2. Fetch and trigger download
       const response = await api.get(data.downloadUrl, {
         responseType: 'blob',
       })
@@ -139,7 +134,7 @@ export function FilesPanel({ roomId }) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="flex flex-col h-full relative"
+      className="flex flex-col h-full relative select-none"
     >
       {/* Hidden File Input */}
       <input
@@ -153,14 +148,15 @@ export function FilesPanel({ roomId }) {
       <AnimatePresence>
         {isDragging && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-30 bg-accent/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-white text-center"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            className="absolute inset-0 z-30 bg-accent/90 backdrop-blur-xl rounded-2xl flex flex-col items-center justify-center p-6 text-white text-center shadow-2xl"
           >
             <UploadCloud className="w-12 h-12 mb-2 animate-bounce" />
-            <p className="text-title-2 font-bold">Drop file to encrypt & share</p>
-            <p className="text-footnote mt-1 opacity-80">Max size: 50MB</p>
+            <p className="text-title-2 font-bold">Drop to encrypt & share</p>
+            <p className="text-footnote mt-1 opacity-80">AES-256-GCM Vault • Max 50MB</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -171,7 +167,7 @@ export function FilesPanel({ roomId }) {
           <h4 className="text-subheadline font-semibold text-label">Encrypted Vault</h4>
           <p className="text-caption-1 text-label-secondary flex items-center gap-1 mt-0.5">
             <Lock className="w-3 h-3 text-system-success" />
-            AES-256-GCM Encrypted at rest
+            <span>AES-256-GCM Encrypted at rest</span>
           </p>
         </div>
         <Button
@@ -204,26 +200,26 @@ export function FilesPanel({ roomId }) {
         </div>
       )}
 
-      {/* Files List */}
+      {/* Files List (macOS Finder Row Items) */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
         {files.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 text-label-secondary">
-            <div className="w-12 h-12 rounded-2xl bg-surface-elevated flex items-center justify-center text-label-tertiary mb-3 border border-separator/30">
+            <div className="w-12 h-12 rounded-2xl bg-surface-elevated flex items-center justify-center text-label-tertiary mb-3 border border-separator/30 shadow-xs">
               <UploadCloud className="w-6 h-6" />
             </div>
-            <p className="text-subheadline font-medium text-label">No files shared yet</p>
-            <p className="text-caption-1 mt-1 text-label-tertiary max-w-[200px]">
-              Drag & drop any file here or click Upload to encrypt and broadcast.
+            <p className="text-subheadline font-semibold text-label">No files shared yet</p>
+            <p className="text-caption-1 mt-1 text-label-secondary max-w-[200px]">
+              Drag & drop files here to encrypt and broadcast to the room.
             </p>
           </div>
         ) : (
           files.map((file) => (
             <div
               key={file.id}
-              className="glass-panel p-3 rounded-xl border border-separator/30 hover:border-accent/40 transition-colors flex items-center justify-between gap-3 group"
+              className="p-3 rounded-2xl bg-surface-elevated border border-separator/30 hover:border-accent/40 transition-all duration-150 flex items-center justify-between gap-3 group shadow-xs"
             >
               <div className="flex items-center gap-3 overflow-hidden">
-                <div className="w-10 h-10 rounded-lg bg-surface-elevated flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-surface-secondary flex items-center justify-center shrink-0 border border-separator/20">
                   {getFileIcon(file.mimeType)}
                 </div>
                 <div className="truncate">

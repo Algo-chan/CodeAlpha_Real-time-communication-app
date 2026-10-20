@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Video, LogIn, Sparkles, RefreshCw } from 'lucide-react'
+import { Plus, Video, LogIn, Sparkles, RefreshCw, Calendar, ArrowRight } from 'lucide-react'
 import { Navbar } from '../components/layout/Navbar'
 import { Button, Input, Modal, SkeletonCard, EmptyState, useToast } from '../components/ui'
 import { RoomCard } from '../components/room/RoomCard'
@@ -81,52 +81,60 @@ export function Dashboard() {
     }
   }
 
+  const todayDateString = new Date().toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
+    <div className="min-h-screen bg-surface flex flex-col selection:bg-accent/20 selection:text-accent">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-1">
-        {/* Header Greeting & Action Bar */}
+        {/* Header Greeting & macOS Workspace Banner */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-separator/30">
           <div>
-            <div className="inline-flex items-center gap-2 text-accent text-footnote font-medium mb-1">
-              <Sparkles className="w-4 h-4" />
-              <span>Workspace</span>
+            <div className="inline-flex items-center gap-1.5 text-footnote text-label-secondary mb-1.5">
+              <Calendar className="w-3.5 h-3.5 text-accent" />
+              <span>{todayDateString}</span>
             </div>
-            <h1 className="text-large-title font-bold text-label">
+            <h1 className="text-large-title font-bold text-label" style={{ letterSpacing: '-0.022em' }}>
               Welcome back, {user?.name?.split(' ')[0] || 'Friend'}
             </h1>
             <p className="text-body text-label-secondary mt-1">
-              Start an instant meeting, schedule a session, or join via room code.
+              Start an instant session, connect via room code, or manage your recent collaborations.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3">
             <Button
               variant="primary"
               size="lg"
               leftIcon={Plus}
               onClick={() => setIsCreateModalOpen(true)}
-              className="shadow-md shadow-accent/20"
+              className="shadow-lg shadow-accent/25"
             >
               New Meeting
             </Button>
           </div>
         </div>
 
-        {/* Join With Code Bar */}
-        <div className="my-8 glass-panel rounded-card p-5 border border-separator/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-surface-elevated flex items-center justify-center text-label-secondary">
+        {/* Join With Room Code Bar (Content Layer Standard Material) */}
+        <div className="my-8 apple-card p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-accent-muted text-accent flex items-center justify-center shrink-0 border border-accent/20 shadow-xs">
               <LogIn className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-headline font-semibold text-label">Join with Room Code</h3>
-              <p className="text-caption-1 text-label-secondary">Enter a short code like abc-defg-hij to join immediately.</p>
+              <p className="text-caption-1 text-label-secondary">
+                Have an invitation code? Enter it below to join the room instantly.
+              </p>
             </div>
           </div>
 
-          <form onSubmit={handleJoinById} className="flex items-center gap-2 w-full sm:w-auto">
+          <form onSubmit={handleJoinById} className="flex items-center gap-2.5 w-full sm:w-auto">
             <Input
               placeholder="e.g. abc-defg-hij"
               value={joinIdInput}
@@ -142,13 +150,21 @@ export function Dashboard() {
         {/* Recent Rooms Grid */}
         <div className="mt-10">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-title-2 font-bold text-label">Recent Meetings</h2>
+            <div>
+              <h2 className="text-title-2 font-bold text-label" style={{ letterSpacing: '-0.018em' }}>
+                Recent Meetings
+              </h2>
+              <p className="text-caption-1 text-label-secondary mt-0.5">
+                Past conferences and persistent collaboration spaces.
+              </p>
+            </div>
+
             <Button
               variant="ghost"
               size="sm"
               leftIcon={RefreshCw}
               onClick={fetchRooms}
-              className="text-label-secondary"
+              className="text-label-secondary hover:text-label"
             >
               Refresh
             </Button>
@@ -187,26 +203,30 @@ export function Dashboard() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         title="Start a New Meeting"
-        description="Configure your room parameters before entering the pre-join lobby."
+        description="Create an instant WebRTC conference with optional password protection."
         footer={
-          <>
-            <Button variant="ghost" onClick={() => setIsCreateModalOpen(false)}>
+          <div className="flex items-center justify-end gap-3 w-full">
+            <Button
+              variant="ghost"
+              onClick={() => setIsCreateModalOpen(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button
               variant="primary"
               onClick={handleCreateRoom}
-              isLoading={isSubmitting}
+              disabled={!roomName.trim() || isSubmitting}
             >
-              Create & Join
+              {isSubmitting ? 'Creating...' : 'Create & Join'}
             </Button>
-          </>
+          </div>
         }
       >
         <form onSubmit={handleCreateRoom} className="flex flex-col gap-4">
           <Input
             label="Meeting Name"
-            placeholder="e.g. Design Sync & Review"
+            placeholder="e.g. Design Review, Sprint Planning"
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
             required
@@ -216,14 +236,10 @@ export function Dashboard() {
           <Input
             label="Room Password (Optional)"
             type="password"
-            placeholder="Leave empty for public link access"
+            placeholder="Leave empty for public access"
             value={roomPassword}
             onChange={(e) => setRoomPassword(e.target.value)}
           />
-
-          <p className="text-caption-1 text-label-secondary">
-            A short shareable code (e.g. <span className="font-mono text-accent">abc-defg-hij</span>) will be automatically generated.
-          </p>
         </form>
       </Modal>
     </div>

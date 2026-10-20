@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Smile } from 'lucide-react'
-import { Button, Avatar } from '../ui'
+import { ArrowUp } from 'lucide-react'
+import { Avatar } from '../ui'
 import { useRoomStore } from '../../store/room.store'
 
 export function ChatPanel({ socket }) {
@@ -78,14 +78,14 @@ export function ChatPanel({ socket }) {
   }, [])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full select-none">
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {groupedMessages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-label-secondary p-4">
-            <p className="text-subheadline font-medium text-label">No messages yet</p>
-            <p className="text-caption-1 mt-1 text-label-tertiary">
-              Send a message or greeting to start the conversation.
+            <p className="text-subheadline font-semibold text-label">No messages yet</p>
+            <p className="text-caption-1 mt-1 text-label-secondary max-w-[220px]">
+              Say hello or share notes with everyone in this room.
             </p>
           </div>
         ) : (
@@ -104,17 +104,17 @@ export function ChatPanel({ socket }) {
               )}
 
               <div
-                className={`flex flex-col gap-1 max-w-[85%] ${
+                className={`flex flex-col gap-1 max-w-[82%] ${
                   group.isSelf ? 'items-end' : 'items-start'
                 }`}
               >
                 {group.messages.map((m, mIdx) => (
                   <div
                     key={m.id || mIdx}
-                    className={`px-3.5 py-2 text-subheadline break-words rounded-2xl ${
+                    className={`px-4 py-2.5 text-subheadline break-words leading-relaxed ${
                       group.isSelf
-                        ? 'bg-accent text-white rounded-br-sm'
-                        : 'bg-surface-elevated text-label rounded-bl-sm border border-separator/30'
+                        ? 'bg-accent text-white rounded-[18px] rounded-br-[4px] shadow-sm'
+                        : 'bg-surface-elevated text-label rounded-[18px] rounded-bl-[4px] border border-separator/30 shadow-xs'
                     }`}
                   >
                     {m.content}
@@ -122,7 +122,7 @@ export function ChatPanel({ socket }) {
                 ))}
               </div>
 
-              <span className="text-[10px] text-label-tertiary mt-1 px-1">
+              <span className="text-[10px] text-label-secondary mt-1 px-1">
                 {new Date(group.timestamp).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -132,19 +132,19 @@ export function ChatPanel({ socket }) {
           ))
         )}
 
-        {/* Typing Indicator */}
+        {/* Apple-style Bouncing Typing Indicator */}
         <AnimatePresence>
           {typingUsers.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
-              className="flex items-center gap-2 text-caption-1 text-label-secondary px-2 italic"
+              className="flex items-center gap-2 text-caption-1 text-label-secondary px-2"
             >
-              <span className="flex gap-1">
+              <span className="flex items-center gap-1 bg-surface-elevated px-2.5 py-1.5 rounded-pill border border-separator/30 shadow-xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.2s]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.4s]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.15s]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:0.3s]" />
               </span>
               <span>
                 {typingUsers.map((u) => u.displayName).join(', ')}{' '}
@@ -157,24 +157,24 @@ export function ChatPanel({ socket }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Field */}
-      <form onSubmit={handleSendMessage} className="p-3 border-t border-separator/30 bg-surface/80">
-        <div className="relative flex items-center rounded-pill bg-surface-elevated border border-separator/40 focus-within:ring-2 focus-within:ring-accent/30 focus-within:border-accent">
+      {/* iMessage Style Input Capsule */}
+      <form onSubmit={handleSendMessage} className="p-3.5 border-t border-separator/30 bg-surface/50 backdrop-blur-md">
+        <div className="relative flex items-center rounded-pill bg-surface-elevated border border-separator/40 focus-within:ring-2 focus-within:ring-accent/30 focus-within:border-accent shadow-xs">
           <input
             type="text"
             value={inputText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
+            placeholder="iMessage"
             className="w-full bg-transparent px-4 py-2.5 text-subheadline text-label placeholder:text-label-tertiary focus:outline-none"
           />
           <button
             type="submit"
             disabled={!inputText.trim()}
-            className="p-2 mr-1 rounded-full text-accent hover:bg-accent/10 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+            className="p-1.5 mr-1.5 rounded-full bg-accent text-white hover:bg-accent-hover disabled:opacity-20 disabled:pointer-events-none transition-all duration-150 active:scale-95 shadow-xs"
             aria-label="Send message"
           >
-            <Send className="w-4 h-4" />
+            <ArrowUp className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
       </form>
