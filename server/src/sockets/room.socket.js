@@ -1,4 +1,4 @@
-import { Room } from '../models/Room.js'
+import { roomStore } from '../services/db.adapter.js'
 import config from '../config/env.js'
 
 // In-memory active room tracker: Map<roomId, Map<socketId, ParticipantInfo>>
@@ -15,7 +15,7 @@ export const registerRoomHandlers = (io, socket) => {
   socket.on('join-room', async ({ roomId, isAudioEnabled = true, isVideoEnabled = true }) => {
     try {
       const cleanRoomId = roomId.toLowerCase()
-      const dbRoom = await Room.findOne({ shortId: cleanRoomId })
+      const dbRoom = await roomStore.findByShortId(cleanRoomId)
 
       if (!dbRoom) {
         return socket.emit('room-error', { message: 'Room not found' })
@@ -205,7 +205,7 @@ export const registerRoomHandlers = (io, socket) => {
     if (!hostParticipant?.isHost) return
 
     try {
-      await Room.updateOne({ shortId: roomId }, { isLocked })
+      await roomStore.updateLock(roomId, isLocked)
       io.to(roomId).emit('room-lock-changed', { isLocked })
     } catch (err) {
       console.error('Failed to update room lock status', err)

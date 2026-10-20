@@ -1,5 +1,5 @@
 import { authService } from '../services/auth.service.js'
-import { User } from '../models/User.js'
+import { userStore } from '../services/db.adapter.js'
 
 export const authMiddleware = async (req, res, next) => {
   try {
@@ -11,7 +11,7 @@ export const authMiddleware = async (req, res, next) => {
     const token = authHeader.split(' ')[1]
     const decoded = authService.verifyAccessToken(token)
 
-    const user = await User.findById(decoded.userId)
+    const user = await userStore.findById(decoded.userId)
     if (!user) {
       return res.status(401).json({ error: 'User no longer exists' })
     }
@@ -32,7 +32,7 @@ export const optionalAuthMiddleware = async (req, res, next) => {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1]
       const decoded = authService.verifyAccessToken(token)
-      const user = await User.findById(decoded.userId)
+      const user = await userStore.findById(decoded.userId)
       if (user) {
         req.user = user
       }

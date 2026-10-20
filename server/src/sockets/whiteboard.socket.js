@@ -1,4 +1,4 @@
-import { Room } from '../models/Room.js'
+import { roomStore } from '../services/db.adapter.js'
 
 // In-memory whiteboard states for instant syncing without DB bottlenecks
 // Map<roomId, { strokes: [], shapes: [], texts: [], history: [] }>
@@ -16,10 +16,11 @@ const scheduleDBSave = (roomId) => {
     try {
       const state = roomWhiteboardStates.get(roomId)
       if (state) {
-        await Room.updateOne(
-          { shortId: roomId },
-          { whiteboardState: { strokes: state.strokes, shapes: state.shapes, texts: state.texts } }
-        )
+        await roomStore.updateWhiteboard(roomId, {
+          strokes: state.strokes,
+          shapes: state.shapes,
+          texts: state.texts,
+        })
       }
       saveDebounceTimers.delete(roomId)
     } catch (err) {
@@ -33,7 +34,7 @@ const scheduleDBSave = (roomId) => {
 export const registerWhiteboardHandlers = (io, socket) => {
   const getRoomState = async (roomId) => {
     if (!roomWhiteboardStates.has(roomId)) {
-      const room = await Room.findOne({ shortId: roomId })
+      const room = await roomStore.findByShortId(roomId)
       const state = room?.whiteboardState || { strokes: [], shapes: [], texts: [] }
       roomWhiteboardStates.set(roomId, {
         strokes: state.strokes || [],

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import config from '../config/env.js'
-import { User } from '../models/User.js'
+import { userStore } from '../services/db.adapter.js'
 
 export const socketAuthMiddleware = async (socket, next) => {
   try {
@@ -26,13 +26,13 @@ export const socketAuthMiddleware = async (socket, next) => {
     }
 
     // Otherwise standard user access token
-    const user = await User.findById(decoded.userId)
+    const user = await userStore.findById(decoded.userId)
     if (!user) {
       return next(new Error('User not found'))
     }
 
     socket.user = {
-      userId: user._id.toString(),
+      userId: user._id ? user._id.toString() : user.id,
       displayName: user.name,
       email: user.email,
       isHost: false,

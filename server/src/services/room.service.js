@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { Room } from '../models/Room.js'
+import { roomStore } from './db.adapter.js'
 import config from '../config/env.js'
 
 export const roomService = {
@@ -26,10 +26,10 @@ export const roomService = {
    */
   async createRoom({ name, password, userId, hostName }) {
     let shortId = this.generateShortId()
-    let exists = await Room.findOne({ shortId })
+    let exists = await roomStore.findByShortId(shortId)
     while (exists) {
       shortId = this.generateShortId()
-      exists = await Room.findOne({ shortId })
+      exists = await roomStore.findByShortId(shortId)
     }
 
     let passwordHash = null
@@ -38,14 +38,13 @@ export const roomService = {
       passwordHash = await bcrypt.hash(password.trim(), 10)
     }
 
-    const room = new Room({
+    const room = await roomStore.create({
       shortId,
       name: name.trim(),
       password: passwordHash,
       hasPassword,
       createdBy: userId || null,
       hostName: hostName || 'Host',
-      lastActivity: new Date(),
     })
 
     await room.save()
@@ -56,7 +55,7 @@ export const roomService = {
    * Retrieve room metadata by short ID
    */
   async getRoomByShortId(shortId) {
-    const room = await Room.findOne({ shortId: shortId.toLowerCase() })
+    const room = await roomStore.findByShortId(shortId)
     if (!room) {
       const error = new Error('Room not found.')
       error.status = 404
@@ -69,7 +68,7 @@ export const roomService = {
    * Verify password and generate join token
    */
   async joinRoom({ shortId, password, user, guestName }) {
-    const room = await Room.findOne({ shortId: shortId.toLowerCase() })
+    const room = await roomStore.findByShortId(shortId)
     if (!room) {
       const error = new Error('Room not found.')
       error.status = 404
@@ -137,17 +136,14 @@ export const roomService = {
    */
   async getUserRooms(userId) {
     if (!userId) return []
-    const rooms = await Room.find({ createdBy: userId })
-      .sort({ lastActivity: -1 })
-      .limit(12)
-    return rooms.map((r) => r.toJSON())
+    return roomStore.findByUser(userId)
   },
 
   /**
    * Delete room by ID (Host only)
    */
   async deleteRoom(shortId, userId) {
-    const room = await Room.findOne({ shortId: shortId.toLowerCase() })
+    const room = await roomStore.findByShortId(shortId)
     if (!room) {
       const error = new Error('Room not found.')
       error.status = 404
@@ -158,7 +154,7 @@ export const roomService = {
       error.status = 403
       throw error
     }
-    await Room.deleteOne({ _id: room._id })
+    await roomStore.deleteByShortId(shortId)
     return { success: true }
   },
 }

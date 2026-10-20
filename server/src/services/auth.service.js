@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { User } from '../models/User.js'
+import { userStore } from './db.adapter.js'
 import config from '../config/env.js'
 
 const BCRYPT_ROUNDS = 12
@@ -47,7 +47,7 @@ export const authService = {
    * Register a new user
    */
   async register({ email, password, name }) {
-    const existing = await User.findOne({ email: email.toLowerCase() })
+    const existing = await userStore.findByEmail(email)
     if (existing) {
       const error = new Error('An account with this email address already exists.')
       error.status = 409
@@ -55,7 +55,7 @@ export const authService = {
     }
 
     const hashedPassword = await this.hashPassword(password)
-    const user = new User({
+    const user = await userStore.create({
       email: email.toLowerCase(),
       password: hashedPassword,
       name: name.trim(),
@@ -76,7 +76,7 @@ export const authService = {
    * Login user with email & password
    */
   async login({ email, password }) {
-    const user = await User.findOne({ email: email.toLowerCase() })
+    const user = await userStore.findByEmail(email)
     if (!user) {
       const error = new Error('Invalid email or password.')
       error.status = 401
@@ -120,7 +120,7 @@ export const authService = {
       throw error
     }
 
-    const user = await User.findById(decoded.userId)
+    const user = await userStore.findById(decoded.userId)
     if (!user || user.refreshToken !== oldRefreshToken) {
       const error = new Error('Refresh token has been revoked or expired.')
       error.status = 401
@@ -144,7 +144,7 @@ export const authService = {
    */
   async logout(userId) {
     if (userId) {
-      await User.findByIdAndUpdate(userId, { refreshToken: null })
+      await userStore.updateRefreshToken(userId, null)
     }
     return { success: true }
   },

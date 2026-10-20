@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-import { FileRecord } from '../models/FileRecord.js'
+import { fileRecordStore } from './db.adapter.js'
 import storageService from './storage.service.js'
 import config from '../config/env.js'
 
@@ -86,7 +86,7 @@ export const fileService = {
     const storedName = `${Date.now()}_${crypto.randomBytes(8).toString('hex')}.enc`
     await storageService.saveFile(storedName, finalBuffer)
 
-    const record = new FileRecord({
+    const record = await fileRecordStore.save({
       roomId: roomId.toLowerCase(),
       userId,
       displayName,
@@ -98,8 +98,6 @@ export const fileService = {
       iv,
       uploadedAt: new Date(),
     })
-
-    await record.save()
 
     return {
       id: record._id.toString(),
@@ -115,7 +113,7 @@ export const fileService = {
    * Get decrypted file buffer for authorized download
    */
   async getDecryptedFile(fileId) {
-    const record = await FileRecord.findById(fileId)
+    const record = await fileRecordStore.findById(fileId)
     if (!record) {
       const error = new Error('File not found')
       error.status = 404
@@ -143,18 +141,7 @@ export const fileService = {
    * List files uploaded to a specific room
    */
   async getRoomFiles(roomId) {
-    const files = await FileRecord.find({ roomId: roomId.toLowerCase() })
-      .sort({ uploadedAt: -1 })
-      .limit(100)
-
-    return files.map((f) => ({
-      id: f._id.toString(),
-      originalName: f.originalName,
-      mimeType: f.mimeType,
-      size: f.size,
-      displayName: f.displayName,
-      uploadedAt: f.uploadedAt,
-    }))
+    return fileRecordStore.findByRoom(roomId)
   },
 }
 

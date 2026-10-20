@@ -1,4 +1,4 @@
-import { Message } from '../models/Message.js'
+import { messageStore } from '../services/db.adapter.js'
 
 export const registerChatHandlers = (io, socket) => {
   // Send message
@@ -9,15 +9,13 @@ export const registerChatHandlers = (io, socket) => {
     const trimmedContent = content.trim().slice(0, 2000)
 
     try {
-      const msg = new Message({
+      const msg = await messageStore.save({
         roomId,
         userId: socket.user.userId,
         displayName: socket.user.displayName,
         content: trimmedContent,
         timestamp: new Date(),
       })
-
-      await msg.save()
 
       const payload = {
         id: msg._id.toString(),
@@ -53,19 +51,8 @@ export const registerChatHandlers = (io, socket) => {
     if (!roomId) return
 
     try {
-      const messages = await Message.find({ roomId })
-        .sort({ timestamp: -1 })
-        .limit(50)
-
-      socket.emit('chat:history', {
-        messages: messages.reverse().map((m) => ({
-          id: m._id.toString(),
-          userId: m.userId,
-          displayName: m.displayName,
-          content: m.content,
-          timestamp: m.timestamp,
-        })),
-      })
+      const messages = await messageStore.findRecent(roomId, 50)
+      socket.emit('chat:history', { messages })
     } catch (err) {
       console.error('[Chat] Failed to fetch history:', err)
     }

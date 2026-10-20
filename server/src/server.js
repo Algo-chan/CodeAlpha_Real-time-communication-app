@@ -34,7 +34,8 @@ const startServer = async () => {
     })
     console.log(`[MongoDB] Connected successfully to ${config.MONGO_URI}`)
   } catch (err) {
-    console.warn(`[MongoDB Warning] Could not connect to MongoDB (${err.message}). Database operations will fail until MongoDB is started.`)
+    console.log(`[Database Notice] MongoDB is not running locally (${err.message}).`)
+    console.log(`[Database Notice] Running with automatic In-Memory Store fallback. CollabRoom is 100% active and usable!`)
   }
 
   httpServer.listen(config.PORT, () => {
