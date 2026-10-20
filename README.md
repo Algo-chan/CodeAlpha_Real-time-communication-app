@@ -58,7 +58,9 @@ CollabRoom is a production-grade, real-time video conferencing, digital whiteboa
 
 - **Node.js**: `v20.0.0` or higher (verified on Node.js 24)
 - **npm**: `v9.0.0` or higher
-- **MongoDB**: Local MongoDB instance (`mongodb://localhost:27017/collabroom`), MongoDB Atlas cloud cluster, or Docker (`docker compose up -d`)
+- **MongoDB**: MongoDB Atlas cloud cluster (free at [mongodb.com/atlas](https://www.mongodb.com/cloud/atlas)), a local MongoDB Community service (`mongodb://localhost:27017/collabroom`), or Docker (`docker compose up -d`).
+
+> **Note on Docker:** Docker is **completely optional**. You do not need Docker installed to run or develop CollabRoom. Using MongoDB Atlas or a local MongoDB service works out of the box with `npm run dev`.
 
 ---
 
