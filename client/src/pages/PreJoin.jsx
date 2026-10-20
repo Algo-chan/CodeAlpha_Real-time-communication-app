@@ -250,7 +250,7 @@ export function PreJoin() {
               <form onSubmit={handleJoin} className="flex flex-col gap-4">
                 <Input
                   label="Your Display Name"
-                  placeholder="e.g. Elena Rostova"
+                  placeholder="Enter your name"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   required

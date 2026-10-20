@@ -162,26 +162,26 @@ export function Landing() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 my-4">
               {/* Tile 1: Active Speaker */}
               <div className="relative aspect-video rounded-tile bg-neutral-900 border-2 border-accent shadow-md overflow-hidden flex items-center justify-center group">
-                <Avatar name="Sarah Jenkins" size="xl" />
+                <Avatar name="Host" size="xl" />
                 <div className="absolute bottom-2 left-2 px-2 py-1 rounded-pill glass-toolbar text-white text-caption-1 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-system-success animate-ping" />
-                  Sarah Jenkins (Speaking)
+                  Presenter (Speaking)
                 </div>
               </div>
 
               {/* Tile 2 */}
               <div className="relative aspect-video rounded-tile bg-neutral-800 border border-separator/30 overflow-hidden flex items-center justify-center">
-                <Avatar name="David Chen" size="xl" />
+                <Avatar name="Member A" size="xl" />
                 <div className="absolute bottom-2 left-2 px-2 py-1 rounded-pill glass-toolbar text-white text-caption-1 flex items-center gap-1.5">
-                  David Chen
+                  Participant
                 </div>
               </div>
 
               {/* Tile 3 */}
               <div className="relative aspect-video rounded-tile bg-neutral-850 border border-separator/30 overflow-hidden flex items-center justify-center">
-                <Avatar name="Elena Rostova" size="xl" />
+                <Avatar name="Member B" size="xl" />
                 <div className="absolute bottom-2 left-2 px-2 py-1 rounded-pill glass-toolbar text-white text-caption-1 flex items-center gap-1.5">
-                  Elena Rostova
+                  Participant
                 </div>
               </div>
             </div>

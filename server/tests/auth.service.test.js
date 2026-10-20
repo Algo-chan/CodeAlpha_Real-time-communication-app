@@ -23,8 +23,8 @@ test('AuthService Unit Tests', async (t) => {
   await t.test('generateTokens creates valid access and refresh tokens', () => {
     const mockUser = {
       _id: '507f1f77bcf86cd799439011',
-      email: 'alex@example.com',
-      name: 'Alex Morgan',
+      email: 'testuser@collabroom.internal',
+      name: 'Test User',
     }
 
     const { accessToken, refreshToken } = authService.generateTokens(mockUser)

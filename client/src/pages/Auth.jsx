@@ -141,7 +141,7 @@ export function Auth() {
                   onChange={(e) => setName(e.target.value)}
                   error={errors.name}
                   required={mode === 'signup'}
-                  placeholder="e.g. Alex Morgan"
+                  placeholder="Enter your full name"
                 />
               </motion.div>
             )}
@@ -155,7 +155,7 @@ export function Auth() {
             onChange={(e) => setEmail(e.target.value)}
             error={errors.email}
             required
-            placeholder="alex@example.com"
+            placeholder="you@domain.com"
           />
 
           <Input

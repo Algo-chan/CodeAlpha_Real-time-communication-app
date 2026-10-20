@@ -83,22 +83,14 @@ If you have Docker installed:
 docker compose up -d
 ```
 
-### 4. Seed Demo Users & Rooms
-Populate test accounts and predefined demo conference rooms:
-```bash
-npm run seed --prefix server
-```
-This provisions:
-- **User 1**: `alex@example.com` / `password123`
-- **User 2**: `sarah@example.com` / `password123`
-- **Room 1**: `des-ignr-evw` ("Weekly Design Review", public link)
-- **Room 2**: `str-ateg-y26` ("Executive Strategy & Planning", password: `secret2026`)
-
-### 5. Launch the Platform
-Start both the Vite frontend (`http://localhost:5173`) and Express/Socket.io backend (`http://localhost:3001`):
+### 4. Start the Application
+Start both the client development server (`http://localhost:5173`) and the API/signaling server (`http://localhost:3001`):
 ```bash
 npm run dev
 ```
+
+### 5. Create an Account or Join as Guest
+Open `http://localhost:5173` in your browser. Click **Get Started** to register your personal account, or navigate directly to any room link to join as an authenticated or guest participant.
 
 ---
 
@@ -127,12 +119,13 @@ npm run dev
 To test peer-to-peer audio, video, whiteboard sync, and encrypted file sharing on a single machine:
 
 1. Open **Browser 1** (e.g. Chrome) and navigate to `http://localhost:5173`.
-2. Sign in with `alex@example.com` / `password123` (or join as a Guest).
-3. From the Dashboard, click **New Meeting** or open room `des-ignr-evw`.
-4. In the **Pre-Join Screen**, grant camera/mic permissions, and click **Join Meeting Now**.
-5. Open **Browser 2** (an Incognito window or different browser such as Edge/Firefox/Brave).
-6. Navigate to `http://localhost:5173/join/des-ignr-evw` (or paste the room URL).
-7. Enter a display name (e.g. "Sarah") and click **Join Meeting Now**.
+2. Sign in or click **Get Started** to create your account (or join directly as a Guest).
+3. From the Dashboard, click **New Meeting** to generate an instant conference room.
+4. In the **Pre-Join Screen**, verify your camera and microphone preview, then click **Join Meeting Now**.
+5. Copy the room link or short code from the top header bar.
+6. Open **Browser 2** (an Incognito tab or another browser such as Edge/Firefox/Brave).
+7. Paste the meeting URL (`http://localhost:5173/join/<room-id>`).
+8. Enter a display name and click **Join Meeting Now**.
 8. Both windows will immediately establish WebRTC P2P streams:
    - See and hear both participant video tiles with active speaker detection.
    - Click the **Whiteboard (W)** icon in one window and draw: watch vector strokes and remote cursors sync in real time.
